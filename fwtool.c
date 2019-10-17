@@ -213,7 +213,9 @@ add_data(const char *name)
 
 	if (ret) {
 		fflush(firmware_file);
-		ftruncate(fileno(firmware_file), file_len);
+		ret = ftruncate(fileno(firmware_file), file_len);
+		if (ret < 0)
+			msg("Error during ftruncate: %m\n");
 	}
 
 	return ret;
@@ -374,8 +376,13 @@ extract_data(const char *name)
 		}
 	}
 
-	if (!ret && truncate_file)
-		ftruncate(fileno(firmware_file), dbuf.file_len);
+	if (!ret && truncate_file) {
+		ret = ftruncate(fileno(firmware_file), dbuf.file_len);
+		if (ret < 0) {
+			msg("Error during ftruncate: %m\n");
+			goto out;
+		}
+	}
 
 	if (write_truncated) {
 		if (dbuf.prev)
