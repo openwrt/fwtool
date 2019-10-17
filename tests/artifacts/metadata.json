@@ -1,0 +1,1 @@
+{  "metadata_version": "1.0", "supported_devices":["tplink,archer-c7-v5","archer-c7-v5"], "version": { "dist": "OpenWrt", "version": "SNAPSHOT", "revision": "r11215+4-bba6646b5cba", "target": "ath79/generic", "board": "tplink_archer-c7-v5" } }

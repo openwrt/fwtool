@@ -1,0 +1,3 @@
+tests/cram/*.t.err
+*.pyc
+.venv
