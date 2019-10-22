@@ -251,7 +251,7 @@ extract_tail(struct data_buf *dbuf, void *dest, int len)
 	remove_tail(dbuf, cur_len);
 
 	cur_len = len - cur_len;
-	if (cur_len && !dbuf->cur)
+	if (cur_len < 0 || !dbuf->cur)
 		return 1;
 
 	memcpy(dest, dbuf->cur + dbuf->cur_len - cur_len, cur_len);
@@ -327,8 +327,10 @@ extract_data(const char *name)
 
 	while (1) {
 
-		if (extract_tail(&dbuf, &tr, sizeof(tr)))
+		if (extract_tail(&dbuf, &tr, sizeof(tr))) {
+			msg("unable to extract trailer header\n");
 			break;
+		}
 
 		if (tr.magic != cpu_to_be32(FWIMAGE_MAGIC)) {
 			msg("Data not found\n");
@@ -348,7 +350,10 @@ extract_data(const char *name)
 			break;
 		}
 
-		extract_tail(&dbuf, buf, data_len);
+		if (extract_tail(&dbuf, buf, data_len)) {
+			msg("unable to extract trailer data\n");
+			break;
+		}
 
 		if (tr.type == FWIMAGE_SIGNATURE) {
 			if (!signature_file)
