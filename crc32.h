@@ -17,6 +17,8 @@
 #ifndef __BB_CRC32_H
 #define __BB_CRC32_H
 
+#include <stdint.h>
+
 static inline void
 crc32_filltable(uint32_t *crc_table)
 {
