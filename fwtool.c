@@ -145,11 +145,12 @@ append_trailer(FILE *out, struct fwimage_trailer *tr)
 static int
 add_metadata(struct fwimage_trailer *tr)
 {
-	struct fwimage_header hdr = {};
+	struct fwimage_header hdr;
 
 	tr->type = FWIMAGE_INFO;
 	tr->size = sizeof(hdr) + sizeof(*tr);
 
+	memset(&hdr, 0, sizeof(hdr));
 	trailer_update_crc(tr, &hdr, sizeof(hdr));
 	fwrite(&hdr, sizeof(hdr), 1, firmware_file);
 
@@ -181,12 +182,14 @@ add_signature(struct fwimage_trailer *tr)
 static int
 add_data(const char *name)
 {
-	struct fwimage_trailer tr = {
-		.magic = cpu_to_be32(FWIMAGE_MAGIC),
-		.crc32 = ~0,
-	};
+	struct fwimage_trailer tr;
 	int file_len = 0;
 	int ret = 0;
+
+	memset(&tr, 0, sizeof(tr));
+
+	tr.crc32 = ~0;
+	tr.magic = cpu_to_be32(FWIMAGE_MAGIC);
 
 	firmware_file = fopen(name, "r+");
 	if (!firmware_file) {
@@ -288,6 +291,8 @@ extract_data(const char *name)
 	int ret = 1;
 	void *buf;
 	bool metadata_keep = false;
+
+	memset(&tr, 0, sizeof(tr));
 
 	firmware_file = open_file(name, false);
 	if (!firmware_file) {
