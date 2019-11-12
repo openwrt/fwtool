@@ -3,8 +3,12 @@ CMAKE_MINIMUM_REQUIRED(VERSION 3.0)
 PROJECT(fwtool C)
 INCLUDE(GNUInstallDirs)
 
-ADD_DEFINITIONS(-Wall -Werror -Wextra -Wno-unused-parameter)
+ADD_DEFINITIONS(-Wall -Werror)
 ADD_EXECUTABLE(fwtool fwtool.c)
+
+IF(CMAKE_C_COMPILER_VERSION VERSION_GREATER 6)
+	ADD_DEFINITIONS(-Wextra -Wno-unused-parameter)
+ENDIF()
 
 IF(UNIT_TESTING)
 	ENABLE_TESTING()
